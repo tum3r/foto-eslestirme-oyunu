@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anılar Eşleştirmece</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      background-color: #ffe6f0;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      color: #d63384;
+      padding: 20px;
+    }
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      grid-gap: 15px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    .card {
+      width: 100px;
+      height: 100px;
+      background-color: #fff;
+      border: 2px solid #d63384;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-radius: 10px;
+    }
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+      display: none;
+    }
+    .card.flipped img {
+      display: block;
+    }
+    #win-message {
+      font-size: 20px;
+      color: #d63384;
+      display: none;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Anılar Eşleştirmece 💕</h1>
+  <div id="win-message">Süpersin aşkım! Tüm anılarımızı buldun 💖</div>
+  <div id="game-board"></div>
+
+  <script>
+    const photos = [
+      'https://via.placeholder.com/100?text=A1',
+      'https://via.placeholder.com/100?text=A2',
+      'https://via.placeholder.com/100?text=A3',
+      'https://via.placeholder.com/100?text=A4',
+      'https://via.placeholder.com/100?text=A5',
+      'https://via.placeholder.com/100?text=A6'
+    ];
+
+    let cards = [...photos, ...photos];
+    cards = cards.sort(() => 0.5 - Math.random());
+
+    const board = document.getElementById('game-board');
+    let firstCard = null;
+    let lockBoard = false;
+    let matches = 0;
+
+    cards.forEach((src) => {
+      const card = document.createElement('div');
+      card.classList.add('card');
+      const img = document.createElement('img');
+      img.src = src;
+      card.appendChild(img);
+      card.addEventListener('click', () => {
+        if (lockBoard || card.classList.contains('flipped')) return;
+        card.classList.add('flipped');
+        if (!firstCard) {
+          firstCard = card;
+        } else {
+          const secondCard = card;
+          if (
+            firstCard.querySelector('img').src ===
+            secondCard.querySelector('img').src
+          ) {
+            matches++;
+            firstCard = null;
+            if (matches === photos.length) {
+              document.getElementById('win-message').style.display = 'block';
+            }
+          } else {
+            lockBoard = true;
+            setTimeout(() => {
+              firstCard.classList.remove('flipped');
+              secondCard.classList.remove('flipped');
+              firstCard = null;
+              lockBoard = false;
+            }, 1000);
+          }
+        }
+      });
+      board.appendChild(card);
+    });
+  </script>
+</body>
+</html>
